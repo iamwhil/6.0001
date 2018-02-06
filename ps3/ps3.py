@@ -3,9 +3,14 @@
 # The 6.0001 Word Game
 # Created by: Kevin Luu <luuk> and Jenna Wiens <jwiens>
 #
-# Name          : <your name>
-# Collaborators : <your collaborators>
-# Time spent    : <total time>
+# Name          : Whil Piaivs
+# Date: 2/6/2018
+# Collaborators : None
+# Time spent    : did not track.
+#
+# This program lacks quite a bit of error checking on the user input.
+# This is intentional and assumes correct input to keep the program
+# as simple as possible.3
 
 import math
 import random
@@ -118,11 +123,15 @@ def display_hand(hand):
     hand: dictionary (string -> int)
     """
     
+    s1 = ""
+    
     for letter in hand.keys():
         for j in range(hand[letter]):
-             print(letter, end=' ')      # print all on the same line
+            s1 += "{l} ".format(l = letter)
+            #print(letter, end=' ')      # print all on the same line
     print()                              # print an empty line
 
+    return s1
 #
 # Make sure you understand how this function works and what it does!
 # You will need to modify this for Problem #4.
@@ -237,7 +246,7 @@ def calculate_handlen(hand):
     
     return sum(hand.values())
 
-def play_hand(hand, word_list):
+def play_hand(hand, word_list, subs):
 
     """
     Allows the user to play the given hand, as follows:
@@ -270,12 +279,22 @@ def play_hand(hand, word_list):
     
     # Keep track of the total score
     score = 0
+    it = True # keeps track of the iteration so we don't keep asking to substitute.
     
     # As long as there are still letters left in the hand:
     while calculate_handlen(hand) > 0:
         # Display the hand
-        print("Current Hand: ", display_hand(hand))
+        print("Current Hand: " + display_hand(hand))
         
+        # Allow the user to substitute letters
+        if subs > 0 and it: 
+            if input("Would you like to substitute a letter? ") == "yes" :
+                letter = input("Which letter would you like to replace: ")
+                hand = substitute_hand(hand, letter)
+                subs -= 1
+            it = False
+            print("Current Hand: " + display_hand(hand))
+              
         # Ask user for input
         word = input("Enter word, or \"!!\" to indicate that you are finished: ")
         word = word.lower()
@@ -307,17 +326,14 @@ def play_hand(hand, word_list):
     # Game is over (user entered '!!' or ran out of letters),
     # so tell user the total score
     print("Total score for this hand: ",score)
+    print("---------------")
 
     # Return the total score as result of function
-    return score
+    return (score, subs)
 
-
-
-#
 # Problem #6: Playing a game
-# 
-
-
+#
+    
 #
 # procedure you will use to substitute a letter in a hand
 #
@@ -345,7 +361,18 @@ def substitute_hand(hand, letter):
     returns: dictionary (string -> int)
     """
     
-    pass  # TO DO... Remove this line when you implement this function
+    letter = letter.lower()
+    if letter not in list(string.ascii_lowercase):
+        print("Sorry {} is not a letter".format(letter))
+    else: 
+        all_letters = list(string.ascii_lowercase)
+        for l in hand.keys():
+            if l in all_letters:
+                all_letters.remove(l)
+        hand[random.choice(all_letters)] = hand[letter]
+        del(hand[letter])
+        
+    return hand
        
     
 def play_game(word_list):
@@ -377,11 +404,29 @@ def play_game(word_list):
     * Returns the total score for the series of hands
 
     word_list: list of lowercase strings
+    retries: set to the number of retries a user has.  Normal play 1.
+    subs: set to the number of substitutions a user has. Normal play 1.
     """
     
-    print("play_game not implemented.") # TO DO... Remove this line when you implement this function
+    retries = 1 # allows the user to replay a hand 
+    subs = 1 # allows the user to substitute a number
+    hand = deal_hand(HAND_SIZE)
+    score = 0 
     
-
+    # Get the number of hands that the user wants to play
+    game_len = int(input("Enter total number of hands: "))
+    
+    while game_len > 0 :
+        (game_score, subs) = play_hand(hand, word_list, subs)
+        if retries > 0 :
+            if input("Would you like to replay the hand?") == 'yes': 
+                (game_score, useless) = play_hand(hand, word_list, 0)
+                retries -= 1
+        game_len -= 1
+        score += game_score
+        hand = deal_hand(HAND_SIZE)
+    
+    print("Total score over all hands: {s}".format( s = score ))
 
 #
 # Build data structures used for entire session and play game
