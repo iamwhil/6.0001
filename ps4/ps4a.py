@@ -1,7 +1,11 @@
 # Problem Set 4A
-# Name: <your name here>
+# Name: Whil Piavis
+# Date: 2/7/2018
 # Collaborators:
-# Time Spent: x:xx
+# Time Spent: 1:14
+# Notes: I'm still trying to figure out why the lines 36 - 38 can not be boiled 
+# down into one statement.  For the longest time, as one statement it was returning
+# a lot of "None."
 
 def get_permutations(sequence):
     '''
@@ -25,35 +29,26 @@ def get_permutations(sequence):
 
     permutations = []
     
-    print(sequence[1:])
     if len(sequence) == 1:
-        print("len is 1: ", sequence)
         permutations.append(sequence)
-        print("permutations: ", permutations)
-        return permutations
     else:
-        print("sequence: ", sequence)
         first_letter = sequence[0]
         for item in get_permutations(sequence[1:]):
             for i in range(len(item) + 1):
                 working_item = list(item)
-                print("here")
-                working_item.insert(i, "k")
-                print(working_item))
-                permutations.append(list(item).insert(i, first_letter))
-        return permutations
+                working_item.insert(i, first_letter)
+                permutations.append(''.join(working_item))
+                
+    return permutations
     
 
 if __name__ == '__main__':
 #    #EXAMPLE
-    example_input = 'ab'
+    example_input = 'abc'
     print('Input:', example_input)
     print('Expected Output:', ['abc', 'acb', 'bac', 'bca', 'cab', 'cba'])
     print('Actual Output:', get_permutations(example_input))
     
-#    # Put three example test cases here (for your sanity, limit your inputs
-#    to be three characters or fewer as you will have n! permutations for a 
-#    sequence of length n)
-
-    pass #delete this line and replace with your code here
-
+    print('Test 1:', get_permutations('dog'))
+    print('Test 2:', get_permutations('ab'))
+    print('Test 3:', get_permutations('lego'))
