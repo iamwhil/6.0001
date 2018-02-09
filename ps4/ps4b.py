@@ -1,7 +1,8 @@
 # Problem Set 4B
-# Name: <your name here>
+# Name: Whil Piavis
+# Date: 2/8/2017
 # Collaborators:
-# Time Spent: x:xx
+# Time Spent: x:10
 
 import string
 
@@ -70,7 +71,9 @@ class Message(object):
             self.message_text (string, determined by input text)
             self.valid_words (list, determined using helper function load_words)
         '''
-        pass #delete this line and replace with your code here
+        
+        self.message_text = text
+        self.valid_words = load_words(WORDLIST_FILENAME)
 
     def get_message_text(self):
         '''
@@ -78,7 +81,8 @@ class Message(object):
         
         Returns: self.message_text
         '''
-        pass #delete this line and replace with your code here
+        
+        return self.message_text
 
     def get_valid_words(self):
         '''
@@ -87,7 +91,7 @@ class Message(object):
         
         Returns: a COPY of self.valid_words
         '''
-        pass #delete this line and replace with your code here
+        return self.valid_words
 
     def build_shift_dict(self, shift):
         '''
@@ -103,7 +107,7 @@ class Message(object):
         Returns: a dictionary mapping a letter (string) to 
                  another letter (string). 
         '''
-        pass #delete this line and replace with your code here
+        assert shift >= 0 and shift < 26, "Shift must be greater than or equal to 0 and less than 26."
 
     def apply_shift(self, shift):
         '''
