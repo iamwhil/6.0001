@@ -107,7 +107,25 @@ class Message(object):
         Returns: a dictionary mapping a letter (string) to 
                  another letter (string). 
         '''
+        
+        # Assert that the shift is acceptable.
         assert shift >= 0 and shift < 26, "Shift must be greater than or equal to 0 and less than 26."
+        
+        print("Hello")
+        letters = list(string.ascii_lowercase)
+        shift_dict = {}
+        for i in range(len(letters)):
+            if i + shift > len(letters) - 1:
+                shift_dict[letters[i]] = letters[i + shift - len(letters)]
+            else: 
+                shift_dict[letters[i]] = letters[i + shift]
+        
+        # For each of the keys in the shift dictionary make the upper case entry.
+        shift_dict_copy = shift_dict.copy()
+        for l in shift_dict_copy.keys(): 
+            shift_dict[l.capitalize()] = shift_dict_copy[l].capitalize()
+        
+        return shift_dict
 
     def apply_shift(self, shift):
         '''
@@ -121,7 +139,24 @@ class Message(object):
         Returns: the message text (string) in which every character is shifted
              down the alphabet by the input shift
         '''
-        pass #delete this line and replace with your code here
+        
+        # Assert that the shift is acceptable.
+        assert shift >= 0 and shift < 26, "Shift must be greater than or equal to 0 and less than 26."
+        
+        # Build a list of all available letters.
+        all_letters = list(string.ascii_lowercase + string.ascii_uppercase)
+        shift_dict = self.build_shift_dict(shift)
+        
+        # Break the self.message_text into individual characters.
+        original_text = list(self.get_message_text())
+        shifted_text = []
+        for char in original_text:
+            if char in all_letters:
+                shifted_text.append(shift_dict[char])
+            else:
+                shifted_text.append(char)
+        
+        return ''.join(shifted_text)
 
 class PlaintextMessage(Message):
     def __init__(self, text, shift):
@@ -139,7 +174,10 @@ class PlaintextMessage(Message):
             self.message_text_encrypted (string, created using shift)
 
         '''
-        pass #delete this line and replace with your code here
+        
+        self.shift = shift
+        self.encryption_dict = self.build_shift_dict(self.get_shift())
+        self.message_text_encrypted = self.apply_shift(self.get_shift())
 
     def get_shift(self):
         '''
@@ -147,7 +185,7 @@ class PlaintextMessage(Message):
         
         Returns: self.shift
         '''
-        pass #delete this line and replace with your code here
+        return self.shift
 
     def get_encryption_dict(self):
         '''
@@ -155,7 +193,7 @@ class PlaintextMessage(Message):
         
         Returns: a COPY of self.encryption_dict
         '''
-        pass #delete this line and replace with your code here
+        return self.encryption_dict.copy()
 
     def get_message_text_encrypted(self):
         '''
@@ -163,7 +201,7 @@ class PlaintextMessage(Message):
         
         Returns: self.message_text_encrypted
         '''
-        pass #delete this line and replace with your code here
+        return self.message_text_encrypted
 
     def change_shift(self, shift):
         '''
@@ -175,7 +213,9 @@ class PlaintextMessage(Message):
 
         Returns: nothing
         '''
-        pass #delete this line and replace with your code here
+        
+        assert shift >= 0 and shift < 26, "Shift must be between 0 and 26."
+        self.shift = shift
 
 
 class CiphertextMessage(Message):
@@ -211,10 +251,10 @@ class CiphertextMessage(Message):
 
 if __name__ == '__main__':
 
-#    #Example test case (PlaintextMessage)
-#    plaintext = PlaintextMessage('hello', 2)
-#    print('Expected Output: jgnnq')
-#    print('Actual Output:', plaintext.get_message_text_encrypted())
+    #Example test case (PlaintextMessage)
+    plaintext = PlaintextMessage('hello', 2)
+    print('Expected Output: jgnnq')
+    print('Actual Output:', plaintext.get_message_text_encrypted())
 #
 #    #Example test case (CiphertextMessage)
 #    ciphertext = CiphertextMessage('jgnnq')
