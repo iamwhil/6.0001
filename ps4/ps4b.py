@@ -2,8 +2,9 @@
 # Name: Whil Piavis
 # Date: 2/8/2017
 # Collaborators:
-# Time Spent: x:10
-
+# Time Spent: 0:40
+# Notes it may be worth it, on much longer messages to decrypt, to only decrypt the first
+# 50 words, and if none of them are 'valid' words, move on to the next shift.
 import string
 
 ### HELPER CODE ###
@@ -109,9 +110,8 @@ class Message(object):
         '''
         
         # Assert that the shift is acceptable.
-        assert shift >= 0 and shift < 26, "Shift must be greater than or equal to 0 and less than 26."
+        assert shift >= 0 and shift <= 26, "Shift must be greater than or equal to 0 and less than 26."
         
-        print("Hello")
         letters = list(string.ascii_lowercase)
         shift_dict = {}
         for i in range(len(letters)):
@@ -141,7 +141,7 @@ class Message(object):
         '''
         
         # Assert that the shift is acceptable.
-        assert shift >= 0 and shift < 26, "Shift must be greater than or equal to 0 and less than 26."
+        assert shift >= 0 and shift <= 26, "Shift must be greater than or equal to 0 and less than 26."
         
         # Build a list of all available letters.
         all_letters = list(string.ascii_lowercase + string.ascii_uppercase)
@@ -174,7 +174,7 @@ class PlaintextMessage(Message):
             self.message_text_encrypted (string, created using shift)
 
         '''
-        
+        Message.__init__(self, text)
         self.shift = shift
         self.encryption_dict = self.build_shift_dict(self.get_shift())
         self.message_text_encrypted = self.apply_shift(self.get_shift())
@@ -214,7 +214,7 @@ class PlaintextMessage(Message):
         Returns: nothing
         '''
         
-        assert shift >= 0 and shift < 26, "Shift must be between 0 and 26."
+        assert shift >= 0 and shift <= 26, "Shift must be between 0 and 26."
         self.shift = shift
 
 
@@ -229,7 +229,7 @@ class CiphertextMessage(Message):
             self.message_text (string, determined by input text)
             self.valid_words (list, determined using helper function load_words)
         '''
-        pass #delete this line and replace with your code here
+        Message.__init__(self, text)
 
     def decrypt_message(self):
         '''
@@ -247,22 +247,46 @@ class CiphertextMessage(Message):
         Returns: a tuple of the best shift value used to decrypt the message
         and the decrypted message text using that shift value
         '''
-        pass #delete this line and replace with your code here
 
+        best = 0
+        max_count = 0
+
+        for i in range(26):
+            count = 0
+            shifted_statement = self.apply_shift(26 - i)
+            for word in shifted_statement.split(' '):
+                if is_word(self.get_valid_words(), word):
+                    count += 1
+                if count >= max_count:
+                    max_count = count
+                    best = i
+                    
+        return (26 - best, self.apply_shift(26 - best))
+            
+            
 if __name__ == '__main__':
 
     #Example test case (PlaintextMessage)
-    plaintext = PlaintextMessage('hello', 2)
-    print('Expected Output: jgnnq')
+    plaintext = PlaintextMessage('hello there', 2)
+    print('Expected Output: jgnnq vjgtg')
     print('Actual Output:', plaintext.get_message_text_encrypted())
-#
-#    #Example test case (CiphertextMessage)
-#    ciphertext = CiphertextMessage('jgnnq')
-#    print('Expected Output:', (24, 'hello'))
-#    print('Actual Output:', ciphertext.decrypt_message())
 
-    #TODO: WRITE YOUR TEST CASES HERE
+    #Example test case (CiphertextMessage)
+    ciphertext = CiphertextMessage('jgnnq vjgtg')
+    print('Expected Output:', (24, 'hello there'))
+    print('Actual Output:', ciphertext.decrypt_message())
 
-    #TODO: best shift value and unencrypted story 
+    # Test Case
+    plaintext2 = PlaintextMessage('In my younger days with few coins in my pockets.', 18)
+    print('Expected Output: Af eq qgmfywj vsqk oalz xwo ugafk af eq hgucwlk.')
+    print('Actual Output:', plaintext2.get_message_text_encrypted())
     
-    pass #delete this line and replace with your code here
+    ciphertext2 = CiphertextMessage('Af eq qgmfywj vsqk oalz xwo ugafk af eq hgucwlk.')
+    print('Expected Output:', (18, 'In my younger days with few coins in my pockets.'))
+    print('Actual Output:', ciphertext2.decrypt_message())
+
+    cipher_story = CiphertextMessage(get_story_string())
+    print(cipher_story.decrypt_message())
+
+# Decrypted story.
+# 12, 'Jack Florey is a mythical character created on the spur of a moment to help cover an insufficiently planned hack. He has been registered for classes at MIT twice before, but has reportedly never passed aclass. It has been the tradition of the residents of East Campus to become Jack Florey for a few nights each year to educate incoming students in the ways, means, and ethics of hacking.'
