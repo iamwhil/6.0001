@@ -113,12 +113,12 @@ class PhaseTrigger(Trigger):
             text = text.replace(p, ' ')
         text = text.split()
         phrase_list = self.get_phrase().split()
-        print(text)
-        print(phrase_list)
         
         # Testing with list comprehension
         # This does not work, this checks each element in the list against the other list elemenets.
         #t_f = [True for x in [1, 2, 3] if x in [1, 2, 3, 4]]
+        
+        # Also just using `string in string` does not work as multiple cases are included (cow vs cows).
         
         count = 0 # Count the number of words in the phrase found consecutively in the text.
         for i in range(len(text)):
@@ -133,7 +133,6 @@ class PhaseTrigger(Trigger):
 # Problem 3
 class TitleTrigger(PhaseTrigger):
     """ Returns true if the phrase is found in the Story's title."""
-    
     def __init__(self, phrase):
         PhaseTrigger.__init__(self, phrase)
         
@@ -144,7 +143,17 @@ class TitleTrigger(PhaseTrigger):
             return False
 
 # Problem 4
-# TODO: DescriptionTrigger
+class DescriptionTrigger(PhaseTrigger):
+    """ Returns true if the phrase is found in the Story's description."""
+    def __init__(self, phrase):
+        PhaseTrigger.__init__(self, phrase)
+        
+    def evaluate(self, story):
+        if self.is_phrase_in(story.get_description()):
+            return True
+        else:
+            return False
+        
 
 # TIME TRIGGERS
 
@@ -153,6 +162,17 @@ class TitleTrigger(PhaseTrigger):
 # Constructor:
 #        Input: Time has to be in EST and in the format of "%d %b %Y %H:%M:%S".
 #        Convert time from string to a datetime before saving it as an attribute.
+class TimeTrigger(Trigger):
+    def __init__(self, input_time):
+        self.time = self.format_input_time(input_time)
+        
+    def get_time(self):
+        return self.time
+        
+    def format_input_time(self, input_time):
+        formatted_time = datetime.strptime(input_time, "%d %b %Y %I:%M:%S")
+        formatted_time.replace(tzinfo=pytz.timezone("EST"))
+        return formatted_time
 
 # Problem 6
 # TODO: BeforeTrigger and AfterTrigger
