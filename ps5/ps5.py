@@ -158,11 +158,12 @@ class DescriptionTrigger(PhaseTrigger):
 # TIME TRIGGERS
 
 # Problem 5
-# TODO: TimeTrigger
-# Constructor:
-#        Input: Time has to be in EST and in the format of "%d %b %Y %H:%M:%S".
-#        Convert time from string to a datetime before saving it as an attribute.
 class TimeTrigger(Trigger):
+    """
+    takes a time in EST in the format of %d %b %Y %H:%M:%S
+    
+    Returns a formatted datetime object.
+    """
     def __init__(self, trigger_time):
         self.time = self.format_trigger_time(trigger_time)
         
@@ -176,6 +177,7 @@ class TimeTrigger(Trigger):
 
 # Problem 6
 class BeforeTrigger(TimeTrigger):
+    """Returns true if the story occurs before the time trigger."""
     def __init__(self, trigger_time):
         TimeTrigger.__init__(self, trigger_time)
         
@@ -191,6 +193,7 @@ class BeforeTrigger(TimeTrigger):
             return False
         
 class AfterTrigger(TimeTrigger):
+    """Returns true if the story occurs after the time trigger."""
     def __init__(self, trigger_time):
         TimeTrigger.__init__(self, trigger_time)
         
@@ -210,16 +213,16 @@ class AfterTrigger(TimeTrigger):
 
 # Problem 7
 class NotTrigger(Trigger):
+    """Returns not trigger.evaluate(story)."""
     def __init__(self, T):
         self.trigger = T
 #        
     def evaluate(self, story):
-        print("HERE")
-        print("TRIGGER: ", self.trigger)
         return not self.trigger.evaluate(story)
 
 # Problem 8
 class AndTrigger(Trigger):
+    """Returns true if triggers both fire as true."""
     def __init__(self, t1, t2):
         self.trigger1 = t1
         self.trigger2 = t2
@@ -232,6 +235,7 @@ class AndTrigger(Trigger):
 
 # Problem 9
 class OrTrigger(Trigger):
+    """Returns true if either trigger fires as true."""
     def __init__(self, t1, t2):
         self.trigger1 = t1
         self.trigger2 = t2
@@ -254,12 +258,13 @@ def filter_stories(stories, triggerlist):
 
     Returns: a list of only the stories for which a trigger in triggerlist fires.
     """
-    # TODO: Problem 10
-    # This is a placeholder
-    # (we're just returning all the stories, with no filtering)
-    return stories
-
-
+    filtered_stories = [] # List to hold stories when the trigger fires.
+    for story in stories:
+        for trigger in triggerlist:
+            if trigger.evaluate(story):
+                filtered_stories.append(story)
+    
+    return filtered_stories
 
 #======================
 # User-Specified Triggers
@@ -295,11 +300,11 @@ def main_thread(master):
     # A sample trigger list - you might need to change the phrases to correspond
     # to what is currently in the news
     try:
-        t1 = TitleTrigger("election")
-        t2 = DescriptionTrigger("Trump")
-        t3 = DescriptionTrigger("Clinton")
-        t4 = AndTrigger(t2, t3)
-        triggerlist = [t1, t4]
+        t1 = TitleTrigger("Olympics")
+        #t2 = DescriptionTrigger("2018")
+        #t3 = DescriptionTrigger("Snowboarding")
+        #t4 = AndTrigger(t2, t3)
+        triggerlist = [t1]
 
         # Problem 11
         # TODO: After implementing read_trigger_config, uncomment this line 
