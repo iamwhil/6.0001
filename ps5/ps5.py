@@ -163,19 +163,47 @@ class DescriptionTrigger(PhaseTrigger):
 #        Input: Time has to be in EST and in the format of "%d %b %Y %H:%M:%S".
 #        Convert time from string to a datetime before saving it as an attribute.
 class TimeTrigger(Trigger):
-    def __init__(self, input_time):
-        self.time = self.format_input_time(input_time)
+    def __init__(self, trigger_time):
+        self.time = self.format_trigger_time(trigger_time)
         
     def get_time(self):
         return self.time
         
-    def format_input_time(self, input_time):
-        formatted_time = datetime.strptime(input_time, "%d %b %Y %I:%M:%S")
-        formatted_time.replace(tzinfo=pytz.timezone("EST"))
+    def format_trigger_time(self, trigger_time):
+        formatted_time = datetime.strptime(trigger_time, "%d %b %Y %H:%M:%S")
+        formatted_time = formatted_time.replace(tzinfo=pytz.timezone("EST"))
         return formatted_time
 
 # Problem 6
-# TODO: BeforeTrigger and AfterTrigger
+class BeforeTrigger(TimeTrigger):
+    def __init__(self, trigger_time):
+        TimeTrigger.__init__(self, trigger_time)
+        
+    def evaluate(self, story):
+        pubdate = story.get_pubdate()
+        trigger_time = self.get_time()
+        if pubdate.tzname() is None:
+            pubdate = pubdate.replace(tzinfo=None)
+            trigger_time = trigger_time.replace(tzinfo=None)
+        if pubdate < trigger_time:
+            return True
+        else:
+            return False
+        
+class AfterTrigger(TimeTrigger):
+    def __init__(self, trigger_time):
+        TimeTrigger.__init__(self, trigger_time)
+        
+    def evaluate(self, story):
+        pubdate = story.get_pubdate()
+        trigger_time = self.get_time()
+        if pubdate.tzname() is None:
+            pubdate = pubdate.replace(tzinfo=None)
+            trigger_time = trigger_time.replace(tzinfo=None)
+        if pubdate > trigger_time:
+            return True
+        else:
+            return False
 
 
 # COMPOSITE TRIGGERS
