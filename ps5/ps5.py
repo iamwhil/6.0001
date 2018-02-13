@@ -287,11 +287,24 @@ def read_trigger_config(filename):
             lines.append(line)
 
     # TODO: Problem 11
-    # line is the list of lines that you need to parse and for which you need
-    # to build triggers
-
-    print(lines) # for now, print it so you see what it contains!
-
+    triggers = []
+    for line in lines:
+        trigger_config = line.split(',')
+        first_command = trigger_config.pop(0)
+        if first_command == "ADD":
+            print("YAY!!!")
+        else:
+            trigger_type = trigger_config.pop(0)
+            first_command
+            
+    print(trigger_dict)
+    
+def trigger_dictionary(trigger_type, trigger_config):
+    # Dictionary for building triggers
+    trigger_dict = {
+        "TITLE": TitleTrigger(trigger_config[0]),
+        "DESCRIPTION": TitleTrigger(trigger_config[0])
+        } 
 
 
 SLEEPTIME = 120 #seconds -- how often we poll
@@ -301,14 +314,13 @@ def main_thread(master):
     # to what is currently in the news
     try:
         t1 = TitleTrigger("Olympics")
-        #t2 = DescriptionTrigger("2018")
-        #t3 = DescriptionTrigger("Snowboarding")
-        #t4 = AndTrigger(t2, t3)
-        triggerlist = [t1]
+        t2 = DescriptionTrigger("2018")
+        t3 = DescriptionTrigger("Snowboarding")
+        t4 = AndTrigger(t2, t3)
+        triggerlist = [t1, t4]
 
         # Problem 11
-        # TODO: After implementing read_trigger_config, uncomment this line 
-        # triggerlist = read_trigger_config('triggers.txt')
+        triggerlist = read_trigger_config('triggers.txt')
         
         # HELPER CODE - you don't need to understand this!
         # Draws the popup window that displays the filtered stories
