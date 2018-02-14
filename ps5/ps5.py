@@ -1,7 +1,18 @@
 # 6.0001/6.00 Problem Set 5 - RSS Feed Filter
-# Name:
-# Collaborators:
-# Time:
+# Name: Whil Piaivs
+# Date: 2/13/2018
+# Collaborators: None
+# Time: Unknown
+# Notes: I think this was a pretty fun exercise, however 
+# it glosses over all of the file opening and reading and inputting of data.
+# Also I omitted problem 12 as the election and debate is over.
+# I wish there was a native case or switch statement in Python
+# But using if/elif/else and dictionaries works just fine, and 
+# is what the statements alleviate in other languages.
+# *** The program must be ran in its own terminal, the native compiler in 
+# spyder does not work and TK throws an infinite loop.  Additionally, TK
+# is not pre-installed on older versions of python and must be installed to
+# work.  Python 3.6 runs great.
 
 import feedparser
 import string
