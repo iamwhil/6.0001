@@ -287,41 +287,56 @@ def read_trigger_config(filename):
             lines.append(line)
 
     # TODO: Problem 11
-    triggers = []
+    triggers = {}
+    trigger_list = []
     for line in lines:
         trigger_config = line.split(',')
         first_command = trigger_config.pop(0)
         if first_command == "ADD":
-            print("YAY!!!")
+            for t in trigger_config:
+                trigger_list.append(triggers[t])
         else:
             trigger_type = trigger_config.pop(0)
-            first_command
-            
-    print(trigger_dict)
+            triggers[first_command] = trigger_dictionary(trigger_type, trigger_config, triggers)
+
+    return trigger_list
     
-def trigger_dictionary(trigger_type, trigger_config):
-    # Dictionary for building triggers
-    trigger_dict = {
-        "TITLE": TitleTrigger(trigger_config[0]),
-        "DESCRIPTION": TitleTrigger(trigger_config[0])
-        } 
+def trigger_dictionary(trigger_type, trigger_config, triggers):
+    """
+    Returns a trigger based on the trigger_type and trigger_config.
+    I would have liked to have used a switch or case statement, but
+    it seems Python does not have that baked in.
+    Instead people use dictionaries.  However the dictionary would have
+    still had many if statements to check if the trigger_config was
+    of the correct format, so a single if elif else statement was used."""
+    
+    if trigger_type == "TITLE":
+        return TitleTrigger(trigger_config[0])
+    elif trigger_type == "DESCRIPTION":
+        return TitleTrigger(trigger_config[0])
+    elif trigger_type == "AFTER":
+        return AfterTrigger(trigger_config[0])
+    elif trigger_type == "BEFORE":
+        return BeforeTrigger(trigger_config[0])
+    elif trigger_type == "OR":
+        return OrTrigger(triggers[trigger_config[0]], triggers[trigger_config[1]])
+    elif trigger_type == "AND":
+        return AndTrigger(triggers[trigger_config[0]], triggers[trigger_config[1]])
+    elif trigger_type == "NOT":
+        return NotTrigger(triggers[trigger_config[0]])
+    else:
+        return None
 
 
 SLEEPTIME = 120 #seconds -- how often we poll
 
 def main_thread(master):
-    # A sample trigger list - you might need to change the phrases to correspond
-    # to what is currently in the news
+    """ Runs the main program loading triggers.txt to find news items in the google and yahoo rss feeds."""
     try:
-        t1 = TitleTrigger("Olympics")
-        t2 = DescriptionTrigger("2018")
-        t3 = DescriptionTrigger("Snowboarding")
-        t4 = AndTrigger(t2, t3)
-        triggerlist = [t1, t4]
 
         # Problem 11
         triggerlist = read_trigger_config('triggers.txt')
-        
+
         # HELPER CODE - you don't need to understand this!
         # Draws the popup window that displays the filtered stories
         # Retrieves and filters the stories from the RSS feeds
